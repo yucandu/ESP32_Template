@@ -12,8 +12,9 @@ const char* password = "springchicken";
 const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = -18000;  //Replace with your GMT offset (secs)
 const int daylightOffset_sec = 0;   //Replace with your daylight offset (secs)
+int hours, mins, secs;
 
-char auth[] = "DU_j5IxaBQ3Dp-joTLtsB0DM70UZaEDd";
+char auth[] = "xxxxxxxxxxxxxxx";
 
 AsyncWebServer server(80);
 
