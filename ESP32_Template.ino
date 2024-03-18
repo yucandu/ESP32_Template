@@ -24,7 +24,7 @@ WidgetTerminal terminal(V10);
     static uint32_t __every__##interval = millis(); \
     if (millis() - __every__##interval >= interval && (__every__##interval = millis()))
 
-BLYNK_WRITE(V0) {
+BLYNK_WRITE(V10) {
   if (String("help") == param.asStr()) {
     terminal.println("==List of available commands:==");
     terminal.println("wifi");
