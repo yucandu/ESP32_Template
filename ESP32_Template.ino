@@ -46,8 +46,7 @@ void printLocalTime() {
   struct tm* timeinfo;
   time(&rawtime);
   timeinfo = localtime(&rawtime);
-  terminal.println(asctime(timeinfo));
-  terminal.flush();
+  terminal.print(asctime(timeinfo));
 }
 
 void setup(void) {
