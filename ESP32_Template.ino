@@ -39,6 +39,7 @@ BLYNK_WRITE(V10) {
     terminal.println(WiFi.RSSI());
     printLocalTime();
   }
+    terminal.flush();
 }
 
 void printLocalTime() {
