@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include <BlynkSimpleEsp32.h>
 #include <WiFi.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
 #include "time.h"
 
 const char* ssid = "mikesnet";
@@ -16,7 +13,7 @@ int hours, mins, secs;
 
 char auth[] = "xxxxxxxxxxxxxxx";
 
-AsyncWebServer server(80);
+
 
 WidgetTerminal terminal(V10);
 
@@ -67,12 +64,7 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", "Hi! I am ESP32.");
-  });
-
-  AsyncElegantOTA.begin(&server);    // Start ElegantOTA
-  server.begin();
+  ArduinoOTA.begin();
   Serial.println("HTTP server started");
   delay(250);
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
@@ -94,6 +86,7 @@ void setup(void) {
 }
 
 void loop() {
+      ArduinoOTA.handle();
       if (WiFi.status() == WL_CONNECTED) {Blynk.run();}
       every(1000){
       Blynk.virtualWrite(V1, 69420);
