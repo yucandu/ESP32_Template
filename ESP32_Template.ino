@@ -64,6 +64,10 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+    
+  ArduinoOTA.setHostname("myesp32");
+    
+    
   ArduinoOTA.begin();
   Serial.println("HTTP server started");
   delay(250);
