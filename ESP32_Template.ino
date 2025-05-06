@@ -52,6 +52,7 @@ void setup(void) {
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
+    WiFi.setTxPower(WIFI_POWER_8_5dBm); //low power for better connectivity
   Serial.println("");
 
   // Wait for connection
