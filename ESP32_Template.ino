@@ -12,7 +12,7 @@ const char* password = "springchicken";
 int hours, mins, secs;
 
 char auth[] = "xxxxxxxxxxxxxxx";
-
+struct tm timeinfo;
 bool isSetNtp = false;
 
 void cbSyncTime(struct timeval *tv) { // callback function to show when NTP was synchronized
