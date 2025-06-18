@@ -3,18 +3,29 @@
 #include <BlynkSimpleEsp32.h>
 #include <WiFi.h>
 #include "time.h"
+#include "esp_sntp.h"
 
 const char* ssid = "mikesnet";
 const char* password = "springchicken";
 
-const char* ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = -18000;  //Replace with your GMT offset (secs)
-const int daylightOffset_sec = 0;   //Replace with your daylight offset (secs)
+
 int hours, mins, secs;
 
 char auth[] = "xxxxxxxxxxxxxxx";
 
+bool isSetNtp = false;
 
+void cbSyncTime(struct timeval *tv) { // callback function to show when NTP was synchronized
+  Serial.println("NTP time synched");
+  isSetNtp = true;
+}
+
+void initTime(String timezone){
+  configTzTime(timezone.c_str(), "192.168.50.197");
+  while (!isSetNtp) {
+        delay(250);
+        }
+}
 
 WidgetTerminal terminal(V10);
 
@@ -49,6 +60,7 @@ void printLocalTime() {
 }
 
 void setup(void) {
+  sntp_set_time_sync_notification_cb(cbSyncTime);
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
