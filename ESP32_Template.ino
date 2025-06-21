@@ -85,7 +85,21 @@ void setup(void) {
   ArduinoOTA.begin();
   Serial.println("HTTP server started");
   delay(250);
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  Serial.println("Init time");
+  initTime("EST5EDT,M3.2.0,M11.1.0");
+  Serial.println("Set env");
+  setenv("TZ","EST5EDT,M3.2.0,M11.1.0",1);  //  Now adjust the TZ.  Clock settings are adjusted to show the new local time
+  Serial.println("tzset");
+  tzset();
+  Serial.println("getlocaltime");
+  getLocalTime(&timeinfo);
+
+  time_t rawtime;
+  struct tm* timeinfo;
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  Serial.println(asctime(timeinfo));
   Blynk.config(auth, IPAddress(192, 168, 50, 197), 8080);
   Blynk.connect();
   delay(250);
