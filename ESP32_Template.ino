@@ -17,14 +17,42 @@ bool isSetNtp = false;
 
 void cbSyncTime(struct timeval *tv) { // callback function to show when NTP was synchronized
   Serial.println("NTP time synched");
+  Serial.println("getlocaltime");
+  getLocalTime(&timeinfo);
+
+  time_t rawtime;
+  struct tm* timeinfo;
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  Serial.println(asctime(timeinfo));
+  time_t now = time(nullptr); // local-adjusted time
+  localTimeUnix = static_cast<uint32_t>(now); // 32-bit to send via ESP-NOW
   isSetNtp = true;
 }
 
-void initTime(String timezone){
-  configTzTime(timezone.c_str(), "192.168.50.197");
-  while (!isSetNtp) {
-        delay(250);
-        }
+
+void initSNTP() {  
+  sntp_set_sync_interval(10 * 60 * 1000UL);  // 1 hour
+  sntp_set_time_sync_notification_cb(cbSyncTime);
+  esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
+  esp_sntp_setservername(0, "192.168.50.197");
+  esp_sntp_init();
+  wait4SNTP();
+  setTimezone();
+}
+
+void wait4SNTP() {
+  Serial.print("Waiting for time...");
+  while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
+    delay(1000);
+    Serial.print(".");
+  }
+}
+
+void setTimezone() {  
+  setenv("TZ","EST5EDT,M3.2.0,M11.1.0",1);
+  tzset();
 }
 
 WidgetTerminal terminal(V10);
@@ -83,14 +111,10 @@ void setup(void) {
     
     
   ArduinoOTA.begin();
-  Serial.println("HTTP server started");
+  Serial.println("OTA started");
   delay(250);
   Serial.println("Init time");
-  initTime("EST5EDT,M3.2.0,M11.1.0");
-  Serial.println("Set env");
-  setenv("TZ","EST5EDT,M3.2.0,M11.1.0",1);  //  Now adjust the TZ.  Clock settings are adjusted to show the new local time
-  Serial.println("tzset");
-  tzset();
+  initSNTP();
   Serial.println("getlocaltime");
   getLocalTime(&timeinfo);
 
