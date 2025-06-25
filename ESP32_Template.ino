@@ -8,12 +8,15 @@
 const char* ssid = "mikesnet";
 const char* password = "springchicken";
 
-
 int hours, mins, secs;
 
 char auth[] = "xxxxxxxxxxxxxxx";
 struct tm timeinfo;
 bool isSetNtp = false;
+
+#define every(interval) \
+    static uint32_t __every__##interval = millis(); \
+    if (millis() - __every__##interval >= interval && (__every__##interval = millis()))
 
 void cbSyncTime(struct timeval *tv) { // callback function to show when NTP was synchronized
   Serial.println("NTP time synched");
@@ -56,10 +59,6 @@ void setTimezone() {
 }
 
 WidgetTerminal terminal(V10);
-
-#define every(interval) \
-    static uint32_t __every__##interval = millis(); \
-    if (millis() - __every__##interval >= interval && (__every__##interval = millis()))
 
 BLYNK_WRITE(V10) {
   if (String("help") == param.asStr()) {
@@ -138,6 +137,10 @@ void setup(void) {
   terminal.print("IP address: ");
   terminal.println(WiFi.localIP());
   printLocalTime();
+  terminal.print("Compiled on: ");
+  terminal.print(__DATE__);
+  terminal.print(" at ");
+  terminal.println(__TIME__);
   terminal.flush();
 }
 
